@@ -1,54 +1,66 @@
+#include<iostream>
+using namespace std;
 
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-class LinkedList:
-    def __init__(self):
-        self.head = None
+struct Node {
+    int data;
+    Node* next;
+};
 
-    def insert(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-        else:
-            current = self.head
-            while current.next:
-                current = current.next
-            current.next = new_node
+void insert(Node*& head, int x) {
+    Node* n = new Node();
+    n->data = x;
+    n->next = NULL;
+    
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = n;
+}
 
-    def display(self):
-        result = []
-        current = self.head
-        while current:
-            result.append(current.data)
-            current = current.next
-        return result
+void print(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data;
+        if (temp->next != NULL) cout << "->";
+        temp = temp->next;
+    }
+    cout << "->NULL" << endl;
+}
 
-    def reverse(self):
-        prev = None
-        current = self.head
+Node* reverse(Node* head) {
+    Node* prev = NULL;
+    Node* curr = head;
+    Node* next;
+    
+    while (curr != NULL) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    
+    return prev;
+}
 
-        while current:
-            next_node = current.next
-            current.next = prev
-            prev = current
-            current = next_node
-
-        self.head = prev
-
-def main():
-    ll = LinkedList()
-
-    values = [1, 2, 3, 4]
-    for val in values:
-        ll.insert(val)
-
-    print("Original Linked List:", ll.display())
-
-    ll.reverse()
-
-    print("Reversed Linked List:", ll.display())
-
-if __name__ == "__main__":
-    main()
+int main() {
+    Node* head = NULL;
+    int n, x;
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+        insert(head, x);
+    }
+    
+    print(head);
+    head = reverse(head);
+    print(head);
+    
+    return 0;
+}
