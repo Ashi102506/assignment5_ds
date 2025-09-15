@@ -1,168 +1,185 @@
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
+#include<iostream>
+using namespace std;
 
-class LinkedList:
-    def __init__(self):
-        self.head = None
+struct Node {
+    int data;
+    Node* next;
+};
 
-    def insert_at_beginning(self, data):
-        new_node = Node(data)
-        new_node.next = self.head
-        self.head = new_node
+Node* head = NULL;
 
-    def insert_at_end(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-            return
-        current = self.head
-        while current.next:
-            current = current.next
-        current.next = new_node
+void insertBegin(int x) {
+    Node* n = new Node();
+    n->data = x;
+    n->next = head;
+    head = n;
+}
 
-    def insert_before_value(self, data, target):
-        if not self.head:
-            return
-        if self.head.data == target:
-            self.insert_at_beginning(data)
-            return
-        current = self.head
-        while current.next and current.next.data != target:
-            current = current.next
-        if current.next:
-            new_node = Node(data)
-            new_node.next = current.next
-            current.next = new_node
+void insertEnd(int x) {
+    Node* n = new Node();
+    n->data = x;
+    n->next = NULL;
+    
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = n;
+}
 
-    def insert_after_value(self, data, target):
-        current = self.head
-        while current and current.data != target:
-            current = current.next
-        if current:
-            new_node = Node(data)
-            new_node.next = current.next
-            current.next = new_node
+void insertBefore(int target, int x) {
+    if (head == NULL) return;
+    
+    if (head->data == target) {
+        insertBegin(x);
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next != NULL) {
+        if (temp->next->data == target) {
+            Node* n = new Node();
+            n->data = x;
+            n->next = temp->next;
+            temp->next = n;
+            return;
+        }
+        temp = temp->next;
+    }
+}
 
-    def delete_from_beginning(self):
-        if self.head:
-            self.head = self.head.next
+void insertAfter(int target, int x) {
+    Node* temp = head;
+    while (temp != NULL) {
+        if (temp->data == target) {
+            Node* n = new Node();
+            n->data = x;
+            n->next = temp->next;
+            temp->next = n;
+            return;
+        }
+        temp = temp->next;
+    }
+}
 
-    def delete_from_end(self):
-        if not self.head:
-            return
-        if not self.head.next:
-            self.head = None
-            return
-        current = self.head
-        while current.next.next:
-            current = current.next
-        current.next = None
+void deleteBegin() {
+    if (head == NULL) return;
+    Node* temp = head;
+    head = head->next;
+    delete temp;
+}
 
-    def delete_specific_value(self, target):
-        if not self.head:
-            return
-        if self.head.data == target:
-            self.head = self.head.next
-            return
-        current = self.head
-        while current.next and current.next.data != target:
-            current = current.next
-        if current.next:
-            current.next = current.next.next
+void deleteEnd() {
+    if (head == NULL) return;
+    if (head->next == NULL) {
+        delete head;
+        head = NULL;
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next->next != NULL) {
+        temp = temp->next;
+    }
+    delete temp->next;
+    temp->next = NULL;
+}
 
-    def search_node(self, target):
-        current = self.head
-        position = 0
-        while current:
-            if current.data == target:
-                return position
-            current = current.next
-            position += 1
-        return -1
+void deleteNode(int x) {
+    if (head == NULL) return;
+    
+    if (head->data == x) {
+        deleteBegin();
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next != NULL) {
+        if (temp->next->data == x) {
+            Node* del = temp->next;
+            temp->next = temp->next->next;
+            delete del;
+            return;
+        }
+        temp = temp->next;
+    }
+}
 
-    def display(self):
-        if not self.head:
-            print("List is empty")
-            return
-        current = self.head
-        while current:
-            print(current.data, end=" -> " if current.next else " -> NULL\n")
-            current = current.next
+int search(int x) {
+    Node* temp = head;
+    int pos = 1;
+    while (temp != NULL) {
+        if (temp->data == x) {
+            return pos;
+        }
+        temp = temp->next;
+        pos++;
+    }
+    return -1;
+}
 
-def main():
-    ll = LinkedList()
+void display() {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data;
+        if (temp->next != NULL) cout << " -> ";
+        temp = temp->next;
+    }
+    cout << endl;
+}
 
-    while True:
-        print("\n--- Linked List Operations ---")
-        print("1. Insert at beginning")
-        print("2. Insert at end")
-        print("3. Insert before specific value")
-        print("4. Insert after specific value")
-        print("5. Delete from beginning")
-        print("6. Delete from end")
-        print("7. Delete specific node")
-        print("8. Search for a node")
-        print("9. Display all nodes")
-        print("10. Exit")
-
-        choice = int(input("Enter your choice: "))
-
-        if choice == 1:
-            data = int(input("Enter data: "))
-            ll.insert_at_beginning(data)
-            print(f"Inserted {data} at beginning")
-
-        elif choice == 2:
-            data = int(input("Enter data: "))
-            ll.insert_at_end(data)
-            print(f"Inserted {data} at end")
-
-        elif choice == 3:
-            data = int(input("Enter data to insert: "))
-            target = int(input("Enter target value: "))
-            ll.insert_before_value(data, target)
-            print(f"Inserted {data} before {target}")
-
-        elif choice == 4:
-            data = int(input("Enter data to insert: "))
-            target = int(input("Enter target value: "))
-            ll.insert_after_value(data, target)
-            print(f"Inserted {data} after {target}")
-
-        elif choice == 5:
-            ll.delete_from_beginning()
-            print("Deleted from beginning")
-
-        elif choice == 6:
-            ll.delete_from_end()
-            print("Deleted from end")
-
-        elif choice == 7:
-            target = int(input("Enter value to delete: "))
-            ll.delete_specific_value(target)
-            print(f"Deleted {target}")
-
-        elif choice == 8:
-            target = int(input("Enter value to search: "))
-            pos = ll.search_node(target)
-            if pos != -1:
-                print(f"Node {target} found at position {pos}")
-            else:
-                print(f"Node {target} not found")
-
-        elif choice == 9:
-            print("Current list:")
-            ll.display()
-
-        elif choice == 10:
-            print("Exiting...")
-            break
-
-        else:
-            print("Invalid choice!")
-
-if __name__ == "__main__":
-    main()
-
+int main() {
+    int ch, x, target;
+    
+    while (true) {
+        cout << "1.Insert Begin 2.Insert End 3.Insert Before 4.Insert After" << endl;
+        cout << "5.Delete Begin 6.Delete End 7.Delete Node 8.Search 9.Display 0.Exit" << endl;
+        cin >> ch;
+        
+        if (ch == 1) {
+            cin >> x;
+            insertBegin(x);
+        }
+        else if (ch == 2) {
+            cin >> x;
+            insertEnd(x);
+        }
+        else if (ch == 3) {
+            cin >> target >> x;
+            insertBefore(target, x);
+        }
+        else if (ch == 4) {
+            cin >> target >> x;
+            insertAfter(target, x);
+        }
+        else if (ch == 5) {
+            deleteBegin();
+        }
+        else if (ch == 6) {
+            deleteEnd();
+        }
+        else if (ch == 7) {
+            cin >> x;
+            deleteNode(x);
+        }
+        else if (ch == 8) {
+            cin >> x;
+            int pos = search(x);
+            if (pos != -1) cout << "Position: " << pos << endl;
+            else cout << "Not found" << endl;
+        }
+        else if (ch == 9) {
+            display();
+        }
+        else if (ch == 0) {
+            break;
+        }
+    }
+    
+    return 0;
+}
