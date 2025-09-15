@@ -1,66 +1,80 @@
+#include<iostream>
+using namespace std;
 
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
+struct Node {
+    int data;
+    Node* next;
+};
 
-class LinkedList:
-    def __init__(self):
-        self.head = None
+void insert(Node*& head, int x) {
+    Node* n = new Node();
+    n->data = x;
+    n->next = NULL;
+    
+    if (head == NULL) {
+        head = n;
+        return;
+    }
+    
+    Node* temp = head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = n;
+}
 
-    def insert(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-        else:
-            current = self.head
-            while current.next:
-                current = current.next
-            current.next = new_node
+void print(Node* head) {
+    Node* temp = head;
+    while (temp != NULL) {
+        cout << temp->data;
+        if (temp->next != NULL) cout << "->";
+        temp = temp->next;
+    }
+    cout << endl;
+}
 
-    def display(self):
-        result = []
-        current = self.head
-        while current:
-            result.append(current.data)
-            current = current.next
-        return result
+int countDelete(Node*& head, int key) {
+    int count = 0;
+    
+    while (head != NULL && head->data == key) {
+        Node* temp = head;
+        head = head->next;
+        delete temp;
+        count++;
+    }
+    
+    Node* temp = head;
+    while (temp != NULL && temp->next != NULL) {
+        if (temp->next->data == key) {
+            Node* del = temp->next;
+            temp->next = temp->next->next;
+            delete del;
+            count++;
+        } else {
+            temp = temp->next;
+        }
+    }
+    
+    return count;
+}
 
-    def count_and_delete_occurrences(self, key):
-        count = 0
-        current = self.head
-
-        while current:
-            if current.data == key:
-                count += 1
-            current = current.next
-
-        while self.head and self.head.data == key:
-            self.head = self.head.next
-
-        current = self.head
-        while current and current.next:
-            if current.next.data == key:
-                current.next = current.next.next
-            else:
-                current = current.next
-
-        return count
-
-def main():
-    ll = LinkedList()
-
-    values = [1, 2, 1, 2, 1, 3, 1]
-    for val in values:
-        ll.insert(val)
-
-    print("Original Linked List:", ll.display())
-
-    key = 1
-    count = ll.count_and_delete_occurrences(key)
-
-    print(f"Count of {key}: {count}")
-    print("Updated Linked List:", ll.display())
-
-if __name__ == "__main__":
-    main()
+int main() {
+    Node* head = NULL;
+    int n, x, key;
+    
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        cin >> x;
+        insert(head, x);
+    }
+    
+    cin >> key;
+    
+    print(head);
+    int count = countDelete(head, key);
+    
+    cout << "Count: " << count << endl;
+    print(head);
+    
+    return 0;
+}
